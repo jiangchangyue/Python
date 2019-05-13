@@ -1,9 +1,5 @@
-#include<iostream>
-using namespace std;
-int main()
-{
-  cout<<"hello";
-}
+import pygame
+
 
 5月初确定游戏最终主题为：竞技闯关
 五一劳动节后所有成员安装好pygame包，并开始pygame的学习
