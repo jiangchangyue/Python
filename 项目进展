@@ -1,0 +1,11 @@
+#include<iostream>
+using namespace std;
+int main()
+{
+  cout<<"hello";
+}
+
+5月初确定游戏最终主题为：竞技闯关
+五一劳动节后所有成员安装好pygame包，并开始pygame的学习
+5月10号前确定好了游戏的主要内容，包括场景、人物、模式的确定
+5月10号到现在按照网络教程尝试用pygame学习编写简单代码
