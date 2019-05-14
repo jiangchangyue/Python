@@ -1,0 +1,12 @@
+创建游戏主类，包括界面窗口，生命数，主角，障碍物，子弹，敌人，爆炸等
+
+class Main(object):
+    Width = 1000
+    Height = 800
+    live_count = 4 
+    my_tank = None
+    wall=[]
+    my_tank_missile = []
+    enemy_list = pygame.sprite.Group()
+    enemy_missile_list = pygame.sprite.Group()
+    explode_list = []
