@@ -1,0 +1,66 @@
+设计游戏的开始于结束
+
+
+
+
+    # 开始游戏
+    def startGame(self):
+        pygame.init()
+        screem = pygame.display.set_mode((TankMain.Width, TankMain.Height), 0, 32)
+        pygame.display.set_caption('闯关竞技')
+        for i in range(6):
+            TankMain.wall.append(SteelsWall(screem, 100 + i * 60, 100))
+            TankMain.wall.append(BlockWall(screem, 700, 100 + i * 60))
+            TankMain.wall.append(GrassWall(screem, 500, 0 + i * 60))
+            TankMain.wall.append(GrassWall(screem,50,40))
+
+        TankMain.my_tank = My_TanK(screem)
+        for i in range(0, 20):
+            TankMain.enemy_list.add(Enemy_TanK(screem))
+        while True:
+            for i in TankMain.wall:
+                i.display()
+                i.hit_tank()
+                i.hit_missile()
+                if not i.live:
+                    wall.remove(i)
+                pygame.display.update()  
+            screem.fill((0, 0, 0))
+            for index, text in enumerate(self.write_text(TankMain.enemy_list)):
+                screem.blit(text, (0, 5 + (15 * index)))
+            # screem.blit(self.write_text(TankMain.enemy_list),(0,0))
+            self.get_event(TankMain.my_tank, screem)
+            if TankMain.my_tank:
+                TankMain.my_tank.hit_enemy_missile()
+            if TankMain.my_tank and TankMain.my_tank.live:
+                TankMain.my_tank.display()
+                TankMain.my_tank.move()
+            else:
+                TankMain.my_tank = None
+            for enemy in TankMain.enemy_list:
+                enemy.display()
+                enemy.random_move()
+                # enemy.random_fire()
+            for m in TankMain.my_tank_missile:
+                if m.live:
+                    m.display()
+                    m.hit_tank()
+                    m.move()
+                else:
+                    TankMain.my_tank_missile.remove(m)
+
+            for m in TankMain.enemy_missile_list:
+                if m.live:
+                    m.display()
+                    m.move()
+                else:
+                    TankMain.enemy_missile_list.remove(m)
+
+            for explode in TankMain.explode_list:
+                explode.display()
+            time.sleep(0.1)
+            pygame.display.update()
+
+    # 关闭游戏
+    def stopGame(self):
+        sys.exit()
