@@ -1,0 +1,16 @@
+尝试创建障碍物类
+
+class GrassWall(SteelsWall):
+    def __init__(self, screem, left, top):
+        super().__init__(screem, left, top)
+        self.image = pygame.image.load('image/barrier/grasss.png')
+        self.via = True
+
+
+class BlockWall(SteelsWall):
+    def __init__(self, screem, left, top):
+        super().__init__(screem, left, top)
+        self.image = pygame.image.load('image/barrier/walls.png')
+        self.quality = False
+        self.live = True
+        self.via = False
