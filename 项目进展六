@@ -1,0 +1,19 @@
+为游戏配上了特效音乐
+
+# 加载音效
+	add_sound = pygame.mixer.Sound("./audios/add.wav")
+	add_sound.set_volume(1)
+	bang_sound = pygame.mixer.Sound("./audios/bang.wav")
+	bang_sound.set_volume(1)
+	blast_sound = pygame.mixer.Sound("./audios/blast.wav")
+	blast_sound.set_volume(1)
+	fire_sound = pygame.mixer.Sound("./audios/fire.wav")
+	fire_sound.set_volume(1)
+	Gunfire_sound = pygame.mixer.Sound("./audios/Gunfire.wav")
+	Gunfire_sound.set_volume(1)
+	hit_sound = pygame.mixer.Sound("./audios/hit.wav")
+	hit_sound.set_volume(1)
+	start_sound = pygame.mixer.Sound("./audios/start.wav")
+	start_sound.set_volume(1)
+	num_player = show_start_interface(screen, 630, 630)
+	start_sound.play()
