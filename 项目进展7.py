@@ -1,4 +1,4 @@
-关卡切换部分
+#关卡切换部分
 
 # 关卡切换
 def show_switch_stage(screen, width, height, stage):
