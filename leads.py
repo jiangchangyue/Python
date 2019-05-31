@@ -7,9 +7,8 @@ import random
 class Bullet(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		# 子弹四个方向
 		self.bullets = ['./images/bullet/bullet_up.png', './images/bullet/bullet_down.png', './images/bullet/bullet_left.png', './images/bullet/bullet_right.png']
-		# 子弹方向(默认向上)
+		# 子弹方向
 		self.direction_x, self.direction_y = 0, -1
 		self.bullet = pygame.image.load(self.bullets[0])
 		self.rect = self.bullet.get_rect()
@@ -33,7 +32,6 @@ class Bullet(pygame.sprite.Sprite):
 	# 移动
 	def move(self):
 		self.rect = self.rect.move(self.speed*self.direction_x, self.speed*self.direction_y)
-		# 到地图边缘后消失
 		if (self.rect.top < 3) or (self.rect.bottom > 630 - 3) or (self.rect.left < 3) or (self.rect.right > 630 - 3):
 			self.being = False
 
@@ -43,7 +41,7 @@ class mylead(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.leads = ['./images/mylead/lead_T1_0.png', './images/mylead/lead_T1_1.png', './images/mylead/lead_T1_2.png']
 		self.level = 0
-		# 载入(两个lead为了特效)
+		# 载入
 		self.lead = pygame.image.load(self.leads[self.level]).convert_alpha()
 		self.lead_0 = self.lead.subsurface((0, 0), (48, 48))
 		self.lead_1 = self.lead.subsurface((48, 0), (48, 48))
@@ -87,7 +85,6 @@ class mylead(pygame.sprite.Sprite):
 			self.bullet.stronger = True
 		else:
 			raise ValueError('mylead class -> level value error.')
-	# 等级提升
 	def up_level(self):
 		if self.level < 3:
 			self.level += 1
@@ -98,11 +95,9 @@ class mylead(pygame.sprite.Sprite):
 	# 向上
 	def move_up(self, leadGroup, brickGroup, ironGroup, myhome):
 		self.direction_x, self.direction_y = 0, -1
-		# 先移动后判断
 		self.rect = self.rect.move(self.speed*self.direction_x, self.speed*self.direction_y)
 		self.lead_0 = self.lead.subsurface((0, 0), (48, 48))
 		self.lead_1 = self.lead.subsurface((48, 0), (48, 48))
-		# 是否可以移动
 		is_move = True
 		# 地图顶端
 		if self.rect.top < 3:
@@ -203,7 +198,6 @@ class mylead(pygame.sprite.Sprite):
 class enemylead(pygame.sprite.Sprite):
 	def __init__(self, x=None, kind=None, is_red=None):
 		pygame.sprite.Sprite.__init__(self)
-		# 用于给刚生成的角色播放出生特效
 		self.born = True
 		self.times = 90
 		if kind is None:
@@ -216,7 +210,6 @@ class enemylead(pygame.sprite.Sprite):
 		self.leads3 = ['./images/enemylead/enemy_3_0.png', './images/enemylead/enemy_3_1.png', './images/enemylead/enemy_3_2.png', './images/enemylead/enemy_3_3.png']
 		self.leads4 = ['./images/enemylead/enemy_4_0.png', './images/enemylead/enemy_4_1.png', './images/enemylead/enemy_4_2.png', './images/enemylead/enemy_4_3.png']
 		self.leads = [self.leads1, self.leads2, self.leads3, self.leads4]
-		# 是否携带食物(红色的角色携带食物)
 		if is_red is None:
 			self.is_red = random.choice((True, False, False, False, False))
 		else:
@@ -230,7 +223,6 @@ class enemylead(pygame.sprite.Sprite):
 		self.lead_0 = self.lead.subsurface((0, 48), (48, 48))
 		self.lead_1 = self.lead.subsurface((48, 48), (48, 48))
 		self.rect = self.lead_0.get_rect()
-		# 角色位置
 		if x is None:
 			self.x = random.randint(0, 2)
 		else:
