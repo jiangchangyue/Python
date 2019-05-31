@@ -202,13 +202,13 @@ def main():
 		mybulletsGroup = pygame.sprite.Group()
 		enemybulletsGroup = pygame.sprite.Group()
 		myfoodsGroup = pygame.sprite.Group()
-		# 	-生成敌方角色
+		#生成敌方
 		genEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(genEnemyEvent, 100)
-		# 	-敌方角色静止恢复
+		#敌方角色静止
 		recoverEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(recoverEnemyEvent, 8000)
-		# 	-我方角色无敌恢复
+		#我方角色恢复
 		noprotectMyleadEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(noprotectMyleadEvent, 8000)
 		map_stage = Map(stage)
@@ -228,7 +228,6 @@ def main():
 				enemyleads_now += 1
 				enemyleads_total -= 1
 		myhome = Home()
-		# 出场特效
 		appearance_img = pygame.image.load("./images/others/appear.png").convert_alpha()
 		appearances = []
 		appearances.append(appearance_img.subsurface((0, 0), (48, 48)))
@@ -261,7 +260,7 @@ def main():
 					for each in myleadsGroup:
 						myleadsGroup.protected = False
 			key_pressed = pygame.key.get_pressed()
-			#上下左右 # 空格键射击
+			#上下左右  空格键射击
 			if key_pressed[pygame.K_UP]:
 				leadsGroup.remove(lead_player1)
 				lead_player1.move_up(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
@@ -299,7 +298,6 @@ def main():
 				if lead_player1.protected:
 					screen.blit(lead_player1.protected_mask1, (lead_player1.rect.left, lead_player1.rect.top))
 			for each in enemyleadsGroup:
-				# 出生特效
 				if each.born:
 					if each.times > 0:
 						each.times -= 1
