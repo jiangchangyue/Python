@@ -1,19 +1,15 @@
 # coding: utf-8
 import sys
 import pygame
-import scene
-import tanks
-import home
-import random
+import leads
 from pygame.locals import *
 
-
-# 开始界面显示
+# 开始界面
 def show_start_interface(screen, width, height):
 	tfont = pygame.font.Font('./font/simhei.ttf', width//4)
-	cfont = pygame.font.Font('./font/simhei.ttf', width//20)
-	title = tfont.render(u'闯关竞技', True, (255, 0, 0))
-	content1 = cfont.render(u'按1键开始游戏', True, (0, 0, 255))
+	cfont = pygame.font.Font('./font/simkai.ttf', width//20)
+	title = tfont.render(u'闯关竞技', True, (255, 255, 255))
+	content1 = cfont.render(u'按1键开始游戏', True, (100, 100, 255))
 	trect = title.get_rect()
 	trect.midtop = (width/2, height/4)
 	crect1 = content1.get_rect()
@@ -21,7 +17,6 @@ def show_start_interface(screen, width, height):
 	screen.blit(title, trect)
 	screen.blit(content1, crect1)
 	pygame.display.update()
-   
 	while True:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -30,13 +25,13 @@ def show_start_interface(screen, width, height):
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_1:
 					return 1
-# 结束界面显示
+# 结束界面
 def show_end_interface(screen, width, height, is_win):
 	bg_img = pygame.image.load("./images/others/background.png")
 	screen.blit(bg_img, (0, 0))
 	if is_win:
 		font = pygame.font.Font('./font/simhei.ttf', width//10)
-		content = font.render(u'恭喜通关！', True, (255, 0, 0))
+		content = font.render(u'恭喜通关！', True, (255, 100, 0))
 		rect = content.get_rect()
 		rect.midtop = (width/2, height/2)
 		screen.blit(content, rect)
@@ -51,8 +46,6 @@ def show_end_interface(screen, width, height, is_win):
 			if event.type == QUIT:
 				pygame.quit()
 				exit()
-
-
 # 关卡切换
 def show_switch_stage(screen, width, height, stage):
 	bg_img = pygame.image.load("./images/others/background.png")
@@ -72,142 +65,180 @@ def show_switch_stage(screen, width, height, stage):
 				exit()
 			if event.type == delay_event:
 				return
-
-
-# 子弹类
-class Bullet(pygame.sprite.Sprite):
+# 墙
+class Brick(pygame.sprite.Sprite):
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
-		# 子弹四个方向(上下左右)
-		self.bullets = ['./images/bullet/bullet_up.png', './images/bullet/bullet_down.png', './images/bullet/bullet_left.png', './images/bullet/bullet_right.png']
-		# 子弹方向(默认向上)
-		self.direction_x, self.direction_y = 0, -1
-		self.bullet = pygame.image.load(self.bullets[0])
-		self.rect = self.bullet.get_rect()
-		# 在坦克类中再赋实际值
-		self.rect.left, self.rect.right = 0, 0
-		# 速度
-		self.speed = 100000
-	# 改变子弹方向
-	def turn(self, direction_x, direction_y):
-		self.direction_x, self.direction_y = direction_x, direction_y
-		if self.direction_x == 0 and self.direction_y == -1:
-			self.bullet = pygame.image.load(self.bullets[0])
-		elif self.direction_x == 0 and self.direction_y == 1:
-			self.bullet = pygame.image.load(self.bullets[1])
-		elif self.direction_x == -1 and self.direction_y == 0:
-			self.bullet = pygame.image.load(self.bullets[2])
-		elif self.direction_x == 1 and self.direction_y == 0:
-			self.bullet = pygame.image.load(self.bullets[3])
-		else:
-			raise ValueError('Bullet class -> direction value error.')
-	# 移动
-	def move(self):
-		#self.rect = self.rect.move(self.speed*self.direction_x, self.speed*self.direction_y)
-		self.rect = self.rect.move(self.speed, self.speed)
-		# 到地图边缘后消失
-		if (self.rect.top < 3) or (self.rect.bottom > 630 - 3) or (self.rect.left < 3) or (self.rect.right > 630 - 3):
-			self.being = False
+		self.brick = pygame.image.load('./images/scene/brick.png')
+		self.rect = self.brick.get_rect()
+		self.being = False
+# 地图
+class Map():
+	def __init__(self, stage):
+		self.brickGroup = pygame.sprite.Group()
+		self.ironGroup  = pygame.sprite.Group()
+		self.iceGroup = pygame.sprite.Group()
+		self.riverGroup = pygame.sprite.Group()
+		self.treeGroup = pygame.sprite.Group()
+		if stage == 1:
+			self.stage1()
+		elif stage == 2:
+			self.stage2()
+    #关卡一
+	def stage1(self):
+		for x in [2, 6, 7, 18, 19, 23]:
+			for y in [2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x in [10, 15]:
+			for y in [3, 4, 5, 6, 7, 8, 11, 12, 15, 16, 17, 18, 19, 20]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x in [5, 6, 7, 18, 19, 20]:
+			for y in [13, 14]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x in [12, 13]:
+			for y in [16]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x, y in [(0, 14), (1, 14), (12, 6), (13, 6), (12, 7), (13, 7), (24, 14), (25, 14)]:
+			self.brick = Brick()
+			self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+			self.brick.being = True
+			self.brickGroup.add(self.brick)
+	# 关卡二
+	def stage2(self):
+		for x in [2, 3, 6, 7, 18, 19, 22, 23]:
+			for y in [2, 3, 4, 5, 6, 7, 8, 9, 10, 17, 18, 19, 20, 21, 22]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x in [10, 11, 14, 15]:
+			for y in [2, 3, 4, 5, 6, 7, 8, 11, 12, 15, 16, 17, 18, 19, 20]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x in [5, 6, 7, 18, 19, 20]:
+			for y in [13, 14]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x in [12, 13]:
+			for y in [16, 17]:
+				self.brick = Brick()
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.being = True
+				self.brickGroup.add(self.brick)
+		for x, y in [(0, 14), (1, 14), (12, 6), (13, 6), (12, 7), (13, 7), (24, 14), (25, 14)]:
+			self.brick = Brick()
+			self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+			self.brick.being = True
+			self.brickGroup.add(self.brick)
+	def protect_home(self):
+		for x, y in [(11, 23), (12, 23), (13, 23), (14, 23), (11, 24), (14, 24), (11, 25), (14, 25)]:
+			self.brick = Brick()
+			self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+			self.brick.being = True
+			self.brickGroup.add(self.brick)
 
-
-# 主函数
+class Home(pygame.sprite.Sprite):
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.homes = ['./images/home/home1.png', './images/home/home2.png', './images/home/home_destroyed.png']
+		self.home = pygame.image.load(self.homes[0])
+		self.home = pygame.image.load(self.homes[0])
+		self.rect = self.home.get_rect()
+		self.rect.left, self.rect.top = (3 + 12 * 24, 3 + 24 * 24)
+		self.rect.left, self.rect.top = (3+12*24,3+12*24)
+		self.alive = True
+	def set_dead(self):
+		self.home = pygame.image.load(self.homes[-1])
+		self.alive = False
 def main():
-	# 初始化
 	pygame.init()
 	pygame.mixer.init()
 	screen = pygame.display.set_mode((630, 630))
 	pygame.display.set_caption("闯关竞技")
-	# 加载图片
 	bg_img = pygame.image.load("./images/others/background.png")
-	# 加载音效
-	add_sound = pygame.mixer.Sound("./audios/add.wav")
-	add_sound.set_volume(1)
 	bang_sound = pygame.mixer.Sound("./audios/bang.wav")
 	bang_sound.set_volume(1)
-	blast_sound = pygame.mixer.Sound("./audios/blast.wav")
-	blast_sound.set_volume(1)
 	fire_sound = pygame.mixer.Sound("./audios/fire.wav")
 	fire_sound.set_volume(1)
-	Gunfire_sound = pygame.mixer.Sound("./audios/Gunfire.wav")
-	Gunfire_sound.set_volume(1)
-	hit_sound = pygame.mixer.Sound("./audios/hit.wav")
-	hit_sound.set_volume(1)
 	start_sound = pygame.mixer.Sound("./audios/start.wav")
 	start_sound.set_volume(1)
 	# 开始界面
 	num_player = show_start_interface(screen, 630, 630)
-	# 播放游戏开始的音乐
 	start_sound.play()
-	# 关卡
 	stage = 0
 	num_stage = 2
-	# 游戏是否结束
 	is_gameover = False
-	# 时钟
 	clock = pygame.time.Clock()
-	# 主循环
 	while not is_gameover:
 		# 关卡
 		stage += 1
 		if stage > num_stage:
 			break
 		show_switch_stage(screen, 630, 630, stage)
-		# 该关卡坦克总数量
-		enemytanks_total = min(stage * 3, 80)
-		# 场上存在的敌方坦克总数量
-		enemytanks_now = 0
-		# 场上可以存在的敌方坦克总数量
-		enemytanks_now_max = min(max(stage * 2, 4), 8)
+		enemyleads_total = min(stage * 6, 80)
+		enemyleads_now = 0
+		enemyleads_now_max = min(max(stage * 2, 4), 8)
 		# 精灵组
-		tanksGroup = pygame.sprite.Group()
-		mytanksGroup = pygame.sprite.Group()
-		enemytanksGroup = pygame.sprite.Group()
+		leadsGroup = pygame.sprite.Group()
+		myleadsGroup = pygame.sprite.Group()
+		enemyleadsGroup = pygame.sprite.Group()
 		bulletsGroup = pygame.sprite.Group()
 		mybulletsGroup = pygame.sprite.Group()
 		enemybulletsGroup = pygame.sprite.Group()
 		myfoodsGroup = pygame.sprite.Group()
-		# 自定义事件
-		# 	-生成敌方坦克事件
+		# 	-生成敌方角色
 		genEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(genEnemyEvent, 100)
-		# 	-敌方坦克静止恢复事件
+		# 	-敌方角色静止恢复
 		recoverEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(recoverEnemyEvent, 8000)
-		# 	-我方坦克无敌恢复事件
-		noprotectMytankEvent = pygame.constants.USEREVENT
-		pygame.time.set_timer(noprotectMytankEvent, 8000)
-		# 关卡地图
-		map_stage = scene.Map(stage)
-		# 我方坦克
-		tank_player1 = tanks.myTank(1)
-		tanksGroup.add(tank_player1)
-		mytanksGroup.add(tank_player1)
-		is_switch_tank = True
+		# 	-我方角色无敌恢复
+		noprotectMyleadEvent = pygame.constants.USEREVENT
+		pygame.time.set_timer(noprotectMyleadEvent, 8000)
+		map_stage = Map(stage)
+		# 我方角色
+		lead_player1 = leads.mylead(1)
+		leadsGroup.add(lead_player1)
+		myleadsGroup.add(lead_player1)
+		is_switch_lead = True
 		player1_moving = False
-		# 为了轮胎的动画效果
 		time = 0
-	# 敌方坦克
+	# 敌方角色
 		for i in range(0, 3):
-			if enemytanks_total > 0:
-				enemytank = tanks.enemyTank(i)
-				tanksGroup.add(enemytank)
-				enemytanksGroup.add(enemytank)
-				enemytanks_now += 1
-				enemytanks_total -= 1
-		# 大本营
-		myhome = home.Home()
+			if enemyleads_total > 0:
+				enemylead = leads.enemylead(i)
+				leadsGroup.add(enemylead)
+				enemyleadsGroup.add(enemylead)
+				enemyleads_now += 1
+				enemyleads_total -= 1
+		myhome = Home()
 		# 出场特效
 		appearance_img = pygame.image.load("./images/others/appear.png").convert_alpha()
 		appearances = []
 		appearances.append(appearance_img.subsurface((0, 0), (48, 48)))
 		appearances.append(appearance_img.subsurface((48, 0), (48, 48)))
-		appearances.append(appearance_img.subsurface((96, 0), (48, 48)))
-        
+		appearances.append(appearance_img.subsurface((96, 0), (48, 48)))     
 		# 关卡主循环
 		while True:
 			if is_gameover is True:
 				break
-			if enemytanks_total < 1 and enemytanks_now < 1:
+			if enemyleads_total < 1 and enemyleads_now < 1:
 				is_gameover = False
 				break
 			for event in pygame.event.get():
@@ -215,68 +246,59 @@ def main():
 					pygame.quit()
 					sys.exit()
 				if event.type == genEnemyEvent:
-					if enemytanks_total > 0:
-						if enemytanks_now < enemytanks_now_max:
-							enemytank = tanks.enemyTank()
-							if not pygame.sprite.spritecollide(enemytank, tanksGroup, False, None):
-								tanksGroup.add(enemytank)
-								enemytanksGroup.add(enemytank)
-								enemytanks_now += 1
-								enemytanks_total -= 1
+					if enemyleads_total > 0:
+						if enemyleads_now < enemyleads_now_max:
+							enemylead = leads.enemylead()
+							if not pygame.sprite.spritecollide(enemylead, leadsGroup, False, None):
+								leadsGroup.add(enemylead)
+								enemyleadsGroup.add(enemylead)
+								enemyleads_now += 1
+								enemyleads_total -= 1
 				if event.type == recoverEnemyEvent:
-					for each in enemytanksGroup:
+					for each in enemyleadsGroup:
 						each.can_move = True
-				if event.type == noprotectMytankEvent:
-					for each in mytanksGroup:
-						mytanksGroup.protected = False
-			# 检查用户键盘操作
+				if event.type == noprotectMyleadEvent:
+					for each in myleadsGroup:
+						myleadsGroup.protected = False
 			key_pressed = pygame.key.get_pressed()
-			# 玩家
-			# WSAD -> 上下左右
-			# 空格键射击
+			#上下左右 # 空格键射击
 			if key_pressed[pygame.K_UP]:
-				tanksGroup.remove(tank_player1)
-				tank_player1.move_up(tanksGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
-				tanksGroup.add(tank_player1)
+				leadsGroup.remove(lead_player1)
+				lead_player1.move_up(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_DOWN]:
-				tanksGroup.remove(tank_player1)
-				tank_player1.move_down(tanksGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
-				tanksGroup.add(tank_player1)
+				leadsGroup.remove(lead_player1)
+				lead_player1.move_down(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_LEFT]:
-				tanksGroup.remove(tank_player1)
-				tank_player1.move_left(tanksGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
-				tanksGroup.add(tank_player1)
+				leadsGroup.remove(lead_player1)
+				lead_player1.move_left(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_RIGHT ]:
-				tanksGroup.remove(tank_player1)
-				tank_player1.move_right(tanksGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
-				tanksGroup.add(tank_player1)
+				leadsGroup.remove(lead_player1)
+				lead_player1.move_right(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_SPACE]:
-				if not tank_player1.bullet.being:
+				if not lead_player1.bullet.being:
 					fire_sound.play()
-					tank_player1.shoot()
-			# 背景
+					lead_player1.shoot()
 			screen.blit(bg_img, (0, 0))
-			# 石头墙
 			for each in map_stage.brickGroup:
 				screen.blit(each.brick, each.rect)
-			# 钢墙
-			for each in map_stage.ironGroup:
-				screen.blit(each.iron, each.rect)
-
-			# 我方坦克
-			if tank_player1 in mytanksGroup:
-				if is_switch_tank and player1_moving:
-					screen.blit(tank_player1.tank_0, (tank_player1.rect.left, tank_player1.rect.top))
+			# 我方角色
+			if lead_player1 in myleadsGroup:
+				if is_switch_lead and player1_moving:
+					screen.blit(lead_player1.lead_0, (lead_player1.rect.left, lead_player1.rect.top))
 					player1_moving = False
 				else:
-					screen.blit(tank_player1.tank_1, (tank_player1.rect.left, tank_player1.rect.top))
-				if tank_player1.protected:
-					screen.blit(tank_player1.protected_mask1, (tank_player1.rect.left, tank_player1.rect.top))
-			for each in enemytanksGroup:
+					screen.blit(lead_player1.lead_1, (lead_player1.rect.left, lead_player1.rect.top))
+				if lead_player1.protected:
+					screen.blit(lead_player1.protected_mask1, (lead_player1.rect.left, lead_player1.rect.top))
+			for each in enemyleadsGroup:
 				# 出生特效
 				if each.born:
 					if each.times > 0:
@@ -285,79 +307,58 @@ def main():
 							screen.blit(appearances[2], (3+each.x*12*24, 3))
 						elif each.times <= 20:
 							screen.blit(appearances[1], (3+each.x*12*24, 3))
-						'''elif each.times <= 30:
-							screen.blit(appearances[0], (3+each.x*12*24, 3))
-						elif each.times <= 40:
-							screen.blit(appearances[2], (3+each.x*12*24, 3))
-						elif each.times <= 50:
-							screen.blit(appearances[1], (3+each.x*12*24, 3))
-						elif each.times <= 60:
-							screen.blit(appearances[0], (3+each.x*12*24, 3))
-						elif each.times <= 70:
-							screen.blit(appearances[2], (3+each.x*12*24, 3))
-						elif each.times <= 80:
-							screen.blit(appearances[1], (3+each.x*12*24, 3))
-						elif each.times <= 90:
-							screen.blit(appearances[0], (3+each.x*12*24, 3))'''
 					else:
 						each.born = False
 				else:
-					if is_switch_tank:
-						screen.blit(each.tank_0, (each.rect.left, each.rect.top))
+					if is_switch_lead:
+						screen.blit(each.lead_0, (each.rect.left, each.rect.top))
 					else:
-						screen.blit(each.tank_1, (each.rect.left, each.rect.top))
+						screen.blit(each.lead_1, (each.rect.left, each.rect.top))
 					if each.can_move:
-						tanksGroup.remove(each)
-						each.move(tanksGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
-						tanksGroup.add(each)
+						leadsGroup.remove(each)
+						each.move(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+						leadsGroup.add(each)
 			# 我方子弹
-			for tank_player in mytanksGroup:
-				if tank_player.bullet.being:
-					tank_player.bullet.move()
-					screen.blit(tank_player.bullet.bullet, tank_player.bullet.rect)
+			for lead_player in myleadsGroup:
+				if lead_player.bullet.being:
+					lead_player.bullet.move()
+					screen.blit(lead_player.bullet.bullet, lead_player.bullet.rect)
 					# 子弹碰撞敌方子弹
 					for each in enemybulletsGroup:
 						if each.being:
-							if pygame.sprite.collide_rect(tank_player.bullet, each):
-								tank_player.bullet.being = False
+							if pygame.sprite.collide_rect(lead_player.bullet, each):
+								lead_player.bullet.being = False
 								each.being = False
 								enemybulletsGroup.remove(each)
 								break
 						else:
 							enemybulletsGroup.remove(each)	
-					# 子弹碰撞敌方坦克
-					for each in enemytanksGroup:
+					# 子弹碰撞敌方角色
+					for each in enemyleadsGroup:
 						if each.being:
-							if pygame.sprite.collide_rect(tank_player.bullet, each):
+							if pygame.sprite.collide_rect(lead_player.bullet, each):
 								if each.is_red == True:
 									each.is_red = False
 								each.blood = -1
 								each.color = -1
-								if each.blood < 0:#射击死亡次数
+								if each.blood < 0:
 									bang_sound.play()
 									each.being = False
-									enemytanksGroup.remove(each)
-									enemytanks_now -= 1
-									tanksGroup.remove(each)
+									enemyleadsGroup.remove(each)
+									enemyleads_now -= 1
+									leadsGroup.remove(each)
 								else:
 									each.reload()
-								tank_player.bullet.being = False
+								lead_player.bullet.being = False
 								break
 						else:
-							enemytanksGroup.remove(each)
-							tanksGroup.remove(each)
-					# 子弹碰撞石头墙
-					if pygame.sprite.spritecollide(tank_player.bullet, map_stage.brickGroup, True, None):
-						tank_player.bullet.being = False
-					# 子弹碰钢墙
-					if tank_player.bullet.stronger:
-						if pygame.sprite.spritecollide(tank_player.bullet, map_stage.ironGroup, True, None):
-							tank_player.bullet.being = False
-					else:
-						if pygame.sprite.spritecollide(tank_player.bullet, map_stage.ironGroup, False, None):
-							tank_player.bullet.being = False
+							enemyleadsGroup.remove(each)
+							leadsGroup.remove(each)
+					# 子弹碰墙
+					if pygame.sprite.spritecollide(lead_player.bullet, map_stage.brickGroup, True, None):
+						lead_player.bullet.being = False
 			# 敌方子弹
-			for each in enemytanksGroup:
+			for each in enemyleadsGroup:
 				if each.being:
 					if each.can_move and not each.bullet.being:
 						enemybulletsGroup.remove(each.bullet)
@@ -367,44 +368,34 @@ def main():
 						if each.bullet.being:
 							each.bullet.move()
 							screen.blit(each.bullet.bullet, each.bullet.rect)
-							# 子弹碰撞我方坦克
-							for tank_player in mytanksGroup:
-								if pygame.sprite.collide_rect(each.bullet, tank_player):
-									if not tank_player.protected:
+							# 子弹碰撞我方角色
+							for lead_player in myleadsGroup:
+								if pygame.sprite.collide_rect(each.bullet, lead_player):
+									if not lead_player.protected:
 										bang_sound.play()
-										tank_player.life -= 1
-										if tank_player.life < 0:
-											mytanksGroup.remove(tank_player)
-											tanksGroup.remove(tank_player)
-											if len(mytanksGroup) < 1:
+										lead_player.life -= 1
+										if lead_player.life < 0:
+											myleadsGroup.remove(lead_player)
+											leadsGroup.remove(lead_player)
+											if len(myleadsGroup) < 1:
 												is_gameover = True
 										else:
-											tank_player.reset()
+											lead_player.reset()
 									each.bullet.being = False
 									enemybulletsGroup.remove(each.bullet)
 									break
-							# 子弹碰撞石头墙
+							# 子弹碰墙
 							if pygame.sprite.spritecollide(each.bullet, map_stage.brickGroup, True, None):
 								each.bullet.being = False
 								enemybulletsGroup.remove(each.bullet)
-							# 子弹碰钢墙
-							if each.bullet.stronger:
-								if pygame.sprite.spritecollide(each.bullet, map_stage.ironGroup, True, None):
-									each.bullet.being = False
-							else:
-								if pygame.sprite.spritecollide(each.bullet, map_stage.ironGroup, False, None):
-									each.bullet.being = False
 				else:
-					enemytanksGroup.remove(each)
-					tanksGroup.remove(each)
-		
+					enemyleadsGroup.remove(each)
+					leadsGroup.remove(each)
 			pygame.display.flip()
 			clock.tick(60)
 	if not is_gameover:
 		show_end_interface(screen, 630, 630, True)
 	else:
 		show_end_interface(screen, 630, 630, False)
-
-
 if __name__ == '__main__':
 	main()
