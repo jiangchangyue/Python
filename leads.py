@@ -1,5 +1,4 @@
 # coding: utf-8
-# 角色类
 import pygame
 import random
 
