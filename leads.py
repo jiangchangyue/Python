@@ -192,7 +192,6 @@ class enemylead(pygame.sprite.Sprite):
 		self.leads3 = ['./images/enemylead/enemy_3_0.png', './images/enemylead/enemy_3_1.png', './images/enemylead/enemy_3_2.png', './images/enemylead/enemy_3_3.png']
 		self.leads4 = ['./images/enemylead/enemy_4_0.png', './images/enemylead/enemy_4_1.png', './images/enemylead/enemy_4_2.png', './images/enemylead/enemy_4_3.png']
 		self.leads = [self.leads1, self.leads2, self.leads3, self.leads4]
-		# 是否携带食物(红色的角色携带食物)
 		self.color = random.randint(0, 2)
 		self.blood = self.color
 		self.lead = pygame.image.load(self.leads[self.kind][self.color]).convert_alpha()
