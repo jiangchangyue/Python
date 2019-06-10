@@ -4,7 +4,7 @@ import pygame
 import random
 
 # 子弹类
-class Bullet(pygame.sprite.Sprite):
+class Bullet(pygame.sprite.Sprite):#sprite加载动画
 	def __init__(self):
 		pygame.sprite.Sprite.__init__(self)
 		# 子弹四个方向
@@ -12,7 +12,7 @@ class Bullet(pygame.sprite.Sprite):
 		# 子弹方向(默认向上)
 		self.direction_x, self.direction_y = 0, -1
 		self.bullet = pygame.image.load(self.bullets[0])
-		self.rect = self.bullet.get_rect()
+		self.rect = self.bullet.get_rect()#返回矩形区域
 		self.rect.left, self.rect.right = 0, 0
 		self.speed = 10
 		self.being = False
@@ -72,24 +72,6 @@ class mylead(pygame.sprite.Sprite):
 			self.bullet.rect.top = self.rect.top + 20
 		else:
 			raise ValueError('mylead class -> direction value error.')
-		if self.level == 0:
-			self.bullet.speed = 12
-		elif self.level == 1:
-			self.bullet.speed = 12
-		elif self.level == 2:
-			self.bullet.speed = 12
-		elif self.level == 3:
-			self.bullet.speed = 16
-		else:
-			raise ValueError('mylead class -> level value error.')
-	# 等级提升
-	def up_level(self):
-		if self.level < 3:
-			self.level += 1
-		try:
-			self.lead = pygame.image.load(self.leads[self.level]).convert_alpha()
-		except:
-			self.lead = pygame.image.load(self.leads[-1]).convert_alpha()
 	# 向上
 	def move_up(self, leadGroup, brickGroup, ironGroup, index):
 		self.direction_x, self.direction_y = 0, -1
