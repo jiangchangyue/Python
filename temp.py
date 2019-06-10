@@ -4,22 +4,23 @@ import pygame
 import leads
 from pygame.locals import *
 
+
 # 开始界面
 def show_start_interface(screen, width, height):
-	tfont = pygame.font.Font('./font/simhei.ttf', width//4)
+	tfont = pygame.font.Font('./font/simhei.ttf', width//4)#设置字体
 	cfont = pygame.font.Font('./font/simkai.ttf', width//20)
-	title = tfont.render(u'闯关竞技', True, (255, 255, 255))
+	title = tfont.render(u'穿越沙漠', True, (255, 255, 255))
 	content1 = cfont.render(u'按1键开始游戏', True, (100, 100, 255))
 	trect = title.get_rect()
-	trect.midtop = (width/2, height/4)
+	trect.midtop = (width/2, height/4)#设置文字位置
 	crect1 = content1.get_rect()
 	crect1.midtop = (width/2, height/1.8)
 	screen.blit(title, trect)
-	screen.blit(content1, crect1)
-	pygame.display.update()
+	screen.blit(content1, crect1)#将文字加在矩阵上
+	pygame.display.update()#重置
 	while True:
 		for event in pygame.event.get():
-			if event.type == QUIT:
+			if event.type == QUIT:#用户是否关掉游戏界面
 				pygame.quit()
 				exit()
 			elif event.type == pygame.KEYDOWN:
@@ -28,8 +29,8 @@ def show_start_interface(screen, width, height):
 # 结束界面
 def show_end_interface(screen, width, height, is_win):
 	bg_img = pygame.image.load("./images/others/background.png")
-	screen.blit(bg_img, (0, 0))
-	if is_win:
+	screen.blit(bg_img, (0, 0))#设置图片位置
+	if is_win:#通关
 		font = pygame.font.Font('./font/simhei.ttf', width//10)
 		content = font.render(u'恭喜通关！', True, (255, 100, 0))
 		rect = content.get_rect()
@@ -40,7 +41,7 @@ def show_end_interface(screen, width, height, is_win):
 		rect = fail_img.get_rect()
 		rect.midtop = (width/2, height/2)
 		screen.blit(fail_img, rect)
-	pygame.display.update()
+	pygame.display.update()#重置
 	while True:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -54,10 +55,10 @@ def show_switch_stage(screen, width, height, stage):
 	content = font.render(u'第%d关' % stage, True, (0, 255, 0))
 	rect = content.get_rect()
 	rect.midtop = (width/2, height/2)
-	screen.blit(content, rect)
+	screen.blit(content, rect)#将内容放在矩阵上
 	pygame.display.update()
 	delay_event = pygame.constants.USEREVENT
-	pygame.time.set_timer(delay_event, 1000)
+	pygame.time.set_timer(delay_event, 1000)#设置计时器，隔1000ms跳转界面
 	while True:
 		for event in pygame.event.get():
 			if event.type == QUIT:
@@ -71,15 +72,12 @@ class Brick(pygame.sprite.Sprite):
 		pygame.sprite.Sprite.__init__(self)
 		self.brick = pygame.image.load('./images/scene/brick.png')
 		self.rect = self.brick.get_rect()
-		self.being = False
+		self.being = False#墙呈现出来
 # 地图
 class Map():
 	def __init__(self, stage):
 		self.brickGroup = pygame.sprite.Group()
-		self.ironGroup  = pygame.sprite.Group()
-		self.iceGroup = pygame.sprite.Group()
-		self.riverGroup = pygame.sprite.Group()
-		self.treeGroup = pygame.sprite.Group()
+		self.brick1Group  = pygame.sprite.Group()
 		if stage == 1:
 			self.stage1()
 		elif stage == 2:
@@ -90,12 +88,12 @@ class Map():
 			for y in [2, 3, 4, 5, 6, 7, 8, 9, 17, 18, 19, 20]:
 				self.brick = Brick()
 				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
-				self.brick.being = True
+				self.brick.being = True#子弹与墙接触墙消失
 				self.brickGroup.add(self.brick)
 		for x in [10, 15]:
 			for y in [3, 4, 5, 6, 7, 8, 11, 12, 15, 16, 17, 18, 19, 20]:
 				self.brick = Brick()
-				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
+				self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24#设置在画布中的左边和上边
 				self.brick.being = True
 				self.brickGroup.add(self.brick)
 		for x in [5, 6, 7, 18, 19, 20]:
@@ -162,7 +160,7 @@ class Home(pygame.sprite.Sprite):
 		self.rect = self.home.get_rect()
 		self.rect.left, self.rect.top = (3 + 12 * 24, 3 + 24 * 24)
 		self.rect.left, self.rect.top = (3+12*24,3+12*24)
-		self.alive = True
+		self.alive = True#敌人和主角初始地方
 	def set_dead(self):
 		self.home = pygame.image.load(self.homes[-1])
 		self.alive = False
@@ -170,14 +168,14 @@ def main():
 	pygame.init()
 	pygame.mixer.init()
 	screen = pygame.display.set_mode((630, 630))
-	pygame.display.set_caption("闯关竞技")
+	pygame.display.set_caption("穿越沙漠")
 	bg_img = pygame.image.load("./images/others/background.png")
 	bang_sound = pygame.mixer.Sound("./audios/bang.wav")
 	bang_sound.set_volume(1)
 	fire_sound = pygame.mixer.Sound("./audios/fire.wav")
 	fire_sound.set_volume(1)
 	start_sound = pygame.mixer.Sound("./audios/start.wav")
-	start_sound.set_volume(1)
+	start_sound.set_volume(1)#将图片音频传给变量
 	# 开始界面
 	num_player = show_start_interface(screen, 630, 630)
 	start_sound.play()
@@ -202,10 +200,10 @@ def main():
 		mybulletsGroup = pygame.sprite.Group()
 		enemybulletsGroup = pygame.sprite.Group()
 		myfoodsGroup = pygame.sprite.Group()
-		#生成敌方
+		#生成敌方角色
 		genEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(genEnemyEvent, 100)
-		#敌方角色静止
+		#敌方角色静止恢复
 		recoverEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(recoverEnemyEvent, 8000)
 		#我方角色恢复
@@ -227,7 +225,8 @@ def main():
 				enemyleadsGroup.add(enemylead)
 				enemyleads_now += 1
 				enemyleads_total -= 1
-		myhome = Home()
+		index = Home()
+		# 出场特效
 		appearance_img = pygame.image.load("./images/others/appear.png").convert_alpha()
 		appearances = []
 		appearances.append(appearance_img.subsurface((0, 0), (48, 48)))
@@ -249,7 +248,7 @@ def main():
 						if enemyleads_now < enemyleads_now_max:
 							enemylead = leads.enemylead()
 							if not pygame.sprite.spritecollide(enemylead, leadsGroup, False, None):
-								leadsGroup.add(enemylead)
+								leadsGroup.add(enemylead)#增加敌人
 								enemyleadsGroup.add(enemylead)
 								enemyleads_now += 1
 								enemyleads_total -= 1
@@ -260,25 +259,25 @@ def main():
 					for each in myleadsGroup:
 						myleadsGroup.protected = False
 			key_pressed = pygame.key.get_pressed()
-			#上下左右  空格键射击
+			#上下左右 # 空格键射击
 			if key_pressed[pygame.K_UP]:
 				leadsGroup.remove(lead_player1)
-				lead_player1.move_up(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				lead_player1.move_up(leadsGroup, map_stage.brickGroup, map_stage.brick1Group, index)
 				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_DOWN]:
 				leadsGroup.remove(lead_player1)
-				lead_player1.move_down(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				lead_player1.move_down(leadsGroup, map_stage.brickGroup, map_stage.brick1Group, index)
 				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_LEFT]:
 				leadsGroup.remove(lead_player1)
-				lead_player1.move_left(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				lead_player1.move_left(leadsGroup, map_stage.brickGroup, map_stage.brick1Group, index)
 				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_RIGHT ]:
 				leadsGroup.remove(lead_player1)
-				lead_player1.move_right(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+				lead_player1.move_right(leadsGroup, map_stage.brickGroup, map_stage.brick1Group, index)
 				leadsGroup.add(lead_player1)
 				player1_moving = True
 			elif key_pressed[pygame.K_SPACE]:
@@ -298,6 +297,7 @@ def main():
 				if lead_player1.protected:
 					screen.blit(lead_player1.protected_mask1, (lead_player1.rect.left, lead_player1.rect.top))
 			for each in enemyleadsGroup:
+				# 出生特效
 				if each.born:
 					if each.times > 0:
 						each.times -= 1
@@ -314,7 +314,7 @@ def main():
 						screen.blit(each.lead_1, (each.rect.left, each.rect.top))
 					if each.can_move:
 						leadsGroup.remove(each)
-						each.move(leadsGroup, map_stage.brickGroup, map_stage.ironGroup, myhome)
+						each.move(leadsGroup, map_stage.brickGroup, map_stage.brick1Group, index)
 						leadsGroup.add(each)
 			# 我方子弹
 			for lead_player in myleadsGroup:
@@ -335,8 +335,6 @@ def main():
 					for each in enemyleadsGroup:
 						if each.being:
 							if pygame.sprite.collide_rect(lead_player.bullet, each):
-								if each.is_red == True:
-									each.is_red = False
 								each.blood = -1
 								each.color = -1
 								if each.blood < 0:
