@@ -144,12 +144,6 @@ class Map():
 			self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
 			self.brick.being = True
 			self.brickGroup.add(self.brick)
-	def protect_home(self):
-		for x, y in [(11, 23), (12, 23), (13, 23), (14, 23), (11, 24), (14, 24), (11, 25), (14, 25)]:
-			self.brick = Brick()
-			self.brick.rect.left, self.brick.rect.top = 3 + x * 24, 3 + y * 24
-			self.brick.being = True
-			self.brickGroup.add(self.brick)
 
 class Home(pygame.sprite.Sprite):
 	def __init__(self):
@@ -203,7 +197,7 @@ def main():
 		#生成敌方角色
 		genEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(genEnemyEvent, 100)
-		#敌方角色静止恢复
+		#敌方角色恢复
 		recoverEnemyEvent = pygame.constants.USEREVENT
 		pygame.time.set_timer(recoverEnemyEvent, 8000)
 		#我方角色恢复
