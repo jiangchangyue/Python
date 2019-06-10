@@ -53,4 +53,4 @@ Spyder（需要安装pygame包）
 
 源代码共分为两个，包括leads.py（角色类）和temp.py，需要都下载下来，只要运行temp.py文件即可。
 
-百度云链接：https://pan.baidu.com/s/1thS_NiaHzsKOK8jPfrMxjg   （提取码：v06e）
+百度云链接：https://pan.baidu.com/s/1QHDZ2XEkjvP4_hBP6Ugyfg  （提取码：6c9b）
