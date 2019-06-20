@@ -1,17 +1,11 @@
-while 1:
-    t = input("t:")
-    R = ["RMB"]
-    U = ["USD"]
-    if t[0:3] in R:
-        temp = float(t[3:])/6.78
-        temp = "{:.2f}".format(temp)
-        temp = "USD" + str(temp)
-        print("结果：",temp)
-    elif t[0:3] in U:
-        temp = float(t[3:])*6.78
-        temp = "{:.2f}".format(temp)
-        temp = "RMB" + str(temp)
-        print("结果：",temp)
+n=int(input("输入汉诺塔层数:"))
+def hanoi(a,b,c,n):
+    if n==1:
+        print(a,'->',c)
     else:
-        print("输入错误")
-        
+        hanoi(a,c,b,n-1)
+        print(a,'->',c)
+        hanoi(b,a,c,n-1)
+
+hanoi('a','b','c',n)
+    

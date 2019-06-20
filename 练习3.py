@@ -1,7 +1,13 @@
-sum1=0
-for i in range(1,11):
-    sum2=1
-    for j in range(1,i+1):
-        sum2=sum2*j
-    sum1=sum1+sum2
-print("sum:{}".format(sum1))
+a=input("输入一个五位数:")
+i=0
+j=len(a)-1
+while i<=j:
+    if a[i]!=a[j]:
+        break
+    else:
+        i=i+1
+        j=j-1
+if i>=j:
+    print("是回文数.")
+else:
+    print("不是回文数.")
