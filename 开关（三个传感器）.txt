@@ -1,0 +1,289 @@
+
+int bizhangPin1 = 8;//定义避障传感器接口1   后
+//int bizhangPin2 = 7;//定义避障传感器接口2   前
+//int bizhangPin3 = 9;//定义避障传感器接口3   上
+//int ledPin1 =  2;  //定义 LED 接口1
+//int ledPin2 =  3;  //定义 LED 接口2
+int buttonState1 = 0;
+int buttonState2 = 0; 
+int buttonState3 = 0; 
+int swit = 13;
+//int count = 0;
+        
+void setup() 
+{
+ // pinMode(ledPin1, OUTPUT);//定义 LED1 为输出模式 
+  //pinMode(ledPin2, OUTPUT);//定义 LED2 为输出模式     
+  pinMode(bizhangPin1, INPUT);//定义避障传感器1为输入模式
+  //pinMode(bizhangPin2, INPUT);//定义避障传感器2为输入模式  
+  //pinMode(bizhangPin3, INPUT);//定义避障传感器3为输入模式  
+  Serial5.begin(115200);//动作在串口以115200波特率输出  
+  pinMode(swit,INPUT);
+}
+
+void loop()
+{
+//读取十次开关状态并进行判断
+  bool Switch[10];
+  //bool flag = 0;
+  int count = 0;
+  for(int i = 0; i < 10; i++)
+  {
+    Switch[i] = digitalRead(swit);
+    delay(100);
+    if(Switch[i] == 1)
+    count ++;
+  }
+  if(count>=6){
+    while(1)
+    {
+    SerialUSB.println("11111");
+      Serial5.println("#1P1531#2P611#3P1500#4P1460#5P1501#6P1500#7P1544#8P1478#9P833#10P1722#11P1500#12P1454#13P1500#14P1486#15P1478#16P1544#17P1500T1500");
+      delay(1500);
+      Serial5.println("#1P1531#2P611#3P1500#4P1460#5P1501#6P1500#7P1544#8P1478#9P1536#10P2500#11P1500#12P1454#13P1500#14P1486#15P1478#16P1544#17P1500T2000");
+      delay(2000);
+      color();
+
+    miniray();
+  }
+  else if(count<6)
+  {
+    SerialUSB.println("fail");
+    //舞蹈动作
+
+
+  }
+
+
+  }
+delay(500);
+}
+
+/*int getswitch()
+{
+   bool Switch[10];
+  //bool flag = 0;
+  count = 0;
+  for(int i = 0; i < 10; i++)
+  {
+    Switch[i] = digitalRead(swit);
+    delay(100);
+    if(Switch[i] == 1)
+    count ++;
+    return count;
+  }
+}*/
+void miniray()
+{
+  buttonState1 = digitalRead(bizhangPin1);//读取避障传感器1的值并赋给buttonState1
+  buttonState2 = digitalRead(bizhangPin2);//读取避障传感器1的值并赋给buttonState2
+  buttonState3 = digitalRead(bizhangPin3);//读取避障传感器1的值并赋给buttonState3
+  
+  //前、后、上三侧都没有障碍物时，LED闪亮4次,机器人做动作
+  if (buttonState2 == HIGH && buttonState1 == HIGH && buttonState3 == HIGH) 
+{
+    SerialUSB.println("00");
+  for(int i = 0; i <= 3; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(150);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(150);
+  }
+
+//机器人立正
+
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1579#9P1500#10P2344#11P1500#12P1478#13P1367#14P1652#15P1441#16P1420#17P1500#18P633#19P1386T1195");
+delay(1195);
+
+
+
+
+  } 
+
+//前侧没有障碍物，后侧有障碍物,上侧没有障碍物时，LED闪亮3次，机器人做动作
+  else if(buttonState2 == HIGH && buttonState1 == LOW && buttonState3 == HIGH )
+{
+  SerialUSB.println("01");
+    for(int i = 0; i <= 2; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(200);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(200);
+  }
+  
+  //机器人后转击退敌人
+//加动作代码
+
+
+
+
+
+  }
+
+//前侧有障碍物，后侧没有障碍物，上侧没有障碍物时，LED闪亮2次，机器人做动作
+else if(buttonState2 == LOW && buttonState1 == HIGH && buttonState3 == HIGH)
+{
+    SerialUSB.println("10");
+      for(int i = 0; i <= 1; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(250);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(250);
+  }
+  
+//机器人朝前击退敌人
+//
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1579#9P1522#10P2344#11P1500#12P1478#13P1367#14P1652#15P1441#16P1420#17P1500#18P633#19P1386T776");
+delay(776);
+Serial5.println("#1P2100#2P500#3P944#4P1585#5P2056#6P1433#7P2172#8P1646#9P767#10P2344#11P1878#12P1554#13P1678#14P1567#15P2100#16P1538#17P1500#18P2500#19P1386T1195");
+delay(1195);
+Serial5.println("#1P2100#2P500#3P944#4P1585#5P2056#6P1500#7P2145#8P1601#9P611#10P2344#11P1878#12P1554#13P1678#14P1521#15P2072#16P1505#17P1500#18P2500#19P1386T239");
+delay(239);
+Serial5.println("#1P2100#2P500#3P944#4P1585#5P2056#6P1500#7P2145#8P1601#9P833#10P2344#11P1878#12P1554#13P1678#14P1521#15P2072#16P1505#17P1500#18P2500#19P1386T239");
+delay(239);
+Serial5.println("#1P2100#2P500#3P944#4P1585#5P2056#6P1500#7P2145#8P1601#9P833#10P2344#11P1878#12P1554#13P1678#14P1521#15P2072#16P1505#17P1500#18P2500#19P1386T119");
+delay(119);
+Serial5.println("#1P2100#2P500#3P944#4P1585#5P2056#6P1500#7P2145#8P1601#9P611#10P2344#11P1878#12P1554#13P1678#14P1521#15P2078#16P1505#17P1500#18P2500#19P1386T239");
+delay(239);
+Serial5.println("#1P2100#2P678#3P944#4P1585#5P2056#6P1500#7P2145#8P1601#9P833#10P2344#11P1878#12P1554#13P1678#14P1521#15P2072#16P1505#17P1500#18P2500#19P1386T239");
+delay(239);
+Serial5.println("#1P2100#2P678#3P944#4P1585#5P2056#6P1500#7P2145#8P1601#9P833#10P2344#11P1878#12P1554#13P1678#14P1521#15P2072#16P1505#17P1500#18P2500#19P1386T119");
+delay(119);
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1611#6P1600#7P1563#8P1579#9P1500#10P2344#11P1500#12P1478#13P1367#14P1652#15P1441#16P1420#17P1500#18P633#19P1386T4182");
+delay(4182);
+
+
+}
+
+  //前、后两侧都没有障碍物，上侧有障碍物时，LED闪亮5次,机器人做动作
+  if (buttonState2 == HIGH && buttonState1 == HIGH && buttonState3 == LOW) 
+{
+    SerialUSB.println("00");
+  for(int i = 0; i <= 4; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(150);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(150);
+  }
+
+//机器人蹲下抵挡敌人
+
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1579#9P1456#10P2344#11P1500#12P1478#13P1350#14P1678#15P1433#16P1420#17P1500#18P633#19P1386T597");
+delay(597);
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P856#6P833#7P2107#8P1581#9P522#10P2456#11P2011#12P1456#13P2102#14P2466#15P842#16P1420#17P1500#18P633#19P1386T1195");
+delay(1195);
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1579#9P1522#10P2344#11P1500#12P1478#13P1332#14P1663#15P1441#16P1420#17P1500#18P633#19P1386T1195");
+delay(1195);
+
+
+
+  } 
+
+
+
+  //前侧有障碍物、后侧没有障碍物，上侧有障碍物时，LED闪亮6次,机器人做动作
+  if (buttonState2 == LOW && buttonState1 == HIGH && buttonState3 == LOW) 
+{
+    SerialUSB.println("00");
+  for(int i = 0; i <= 5; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(150);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(150);
+  }
+
+//机器人从前、上两侧弹开敌人
+
+
+
+
+
+  } 
+
+
+  //前侧没有障碍物、后侧有障碍物，上侧有障碍物时，LED闪亮7次,机器人做动作
+  if (buttonState2 == HIGH && buttonState1 == LOW && buttonState3 == LOW) 
+{
+    SerialUSB.println("00");
+  for(int i = 0; i <= 6; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(150);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(150);
+  }
+
+//机器人转身从前、上两侧弹开敌人
+
+
+
+  } 
+
+
+  //前侧有障碍物、后侧有障碍物，上侧有障碍物时，LED闪亮8次,机器人做动作
+  if (buttonState2 == LOW && buttonState1 == LOW && buttonState3 == LOW) 
+{
+    SerialUSB.println("00");
+  for(int i = 0; i <= 7; i++)
+  {       
+    digitalWrite(ledPin1, HIGH);
+    digitalWrite(ledPin2, HIGH);
+    delay(150);
+    digitalWrite(ledPin1, LOW);
+    digitalWrite(ledPin2, LOW);
+    delay(150);
+  }
+
+//机器人侧移躲避敌人
+
+
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1490#9P811#10P2344#11P1500#12P1754#13P1367#14P1652#15P1441#16P1976#17P1500#18P656#19P1386T597");
+delay(597);
+Serial5.println("#1P1500#2P856#3P1500#4P1207#5P1633#6P1600#7P1563#8P957#9P811#10P2344#11P1500#12P1478#13P1367#14P1652#15P1441#16P1509#17P1500#18P656#19P1386T358");
+delay(358);
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1379#9P811#10P2344#11P1500#12P1478#13P1367#14P1652#15P1441#16P1420#17P1500#18P656#19P1386T597");
+delay(597);
+Serial5.println("#1P1500#2P633#3P1500#4P1541#5P1633#6P1600#7P1563#8P1579#9P811#10P2344#11P1500#12P1478#13P1367#14P1652#15P1441#16P1420#17P1500#18P656#19P1386T239");
+delay(239);
+
+
+
+
+
+  } 
+
+
+//前后两侧都有障碍物，上侧没有障碍物时，LED渐变；
+else if(buttonState2 == LOW && buttonState1 == LOW && buttonState3 == HIGH)
+{
+    SerialUSB.println("11");
+    digitalWrite(ledPin1,HIGH);
+    digitalWrite(ledPin2,HIGH);
+    delay(400);//完成一个循环后等待的时间,单位毫秒  
+  
+//机器人抡臂甩开敌人
+
+
+
+
+
+
+}
+}
